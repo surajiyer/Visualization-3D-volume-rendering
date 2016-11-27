@@ -22,23 +22,21 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="compositingButton" min="-2" max="-2" attributes="0"/>
+                  <Component id="tf2dButton" min="-2" max="-2" attributes="0"/>
+                  <Component id="mipButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="slicerButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="shadingCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="colorCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="trilCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="renderingSpeedLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                      <Component id="compositingButton" min="-2" max="-2" attributes="0"/>
-                      <Component id="tf2dButton" min="-2" max="-2" attributes="0"/>
-                      <Component id="mipButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="slicerButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="shadingCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
               </Group>
-              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-              <Component id="jToggleButton1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="129" max="32767" attributes="0"/>
+              <EmptySpace pref="339" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -50,11 +48,8 @@
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="renderingSpeedLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="slicerButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jToggleButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="slicerButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="mipButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -63,7 +58,11 @@
               <Component id="tf2dButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="shadingCheckbox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="134" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="colorCheckbox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="trilCheckbox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="127" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -132,12 +131,20 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="shadingCheckboxActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JToggleButton" name="jToggleButton1">
+    <Component class="javax.swing.JCheckBox" name="colorCheckbox">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Use Trilinear Interpolation"/>
+        <Property name="text" type="java.lang.String" value="Color"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jToggleButton1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="colorCheckboxActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="trilCheckbox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Trilinear interpolation"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trilCheckboxActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

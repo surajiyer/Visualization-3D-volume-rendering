@@ -14,13 +14,13 @@ import util.TFChangeListener;
  */
 public class TransferFunction {
 
-    private ArrayList<TFChangeListener> listeners = new ArrayList<TFChangeListener>();
+    private ArrayList<TFChangeListener> listeners = new ArrayList<>();
     
     public TransferFunction(short min, short max) {
         sMin = min;
         sMax = max;
         sRange = sMax - sMin;
-        controlPoints = new ArrayList<ControlPoint>();
+        controlPoints = new ArrayList<>();
 
         controlPoints.add(new ControlPoint(min, new TFColor(0.0, 0.0, 0.0, 0.0)));
         controlPoints.add(new ControlPoint(max, new TFColor(1.0, 1.0, 1.0, 1.0)));
@@ -29,7 +29,6 @@ public class TransferFunction {
         LUT = new TFColor[LUTsize];
 
         buildLUT();
-
     }
     
     

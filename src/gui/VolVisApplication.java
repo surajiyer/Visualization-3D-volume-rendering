@@ -159,7 +159,7 @@ public class VolVisApplication extends javax.swing.JFrame {
                 File file = fc.getSelectedFile();
                 volume = new Volume(file);
                 
-                String infoText = new String("Volume data info:\n");
+                String infoText = "Volume data info:\n";
                 infoText = infoText.concat(file.getName() + "\n");
                 infoText = infoText.concat("dimensions:\t\t" + volume.getDimX() + " x " + volume.getDimY() + " x " + volume.getDimZ() + "\n");
                 infoText = infoText.concat("voxel value range:\t" + volume.getMinimum() + " - " + volume.getMaximum());
@@ -170,8 +170,6 @@ public class VolVisApplication extends javax.swing.JFrame {
                 tabbedPanel.addTab("Transfer function", raycastRenderer.getTFPanel());
                 tabbedPanel.addTab("2D transfer function", raycastRenderer.getTF2DPanel());
                 visualization.update();
-
-
         }
     }//GEN-LAST:event_loadButtonActionPerformed
 

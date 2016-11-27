@@ -22,6 +22,24 @@ public class TFColor {
         a = alpha;
     }
     
+    public TFColor(TFColor c) {
+        r = c.r;
+        g = c.g;
+        b = c.b;
+        a = c.a;
+    }
+    
+    public void set(TFColor c) {
+        set(c.r, c.g, c.b, c.a);
+    }
+    
+    public void set(double red, double green, double blue, double alpha) {
+        r = red;
+        g = green;
+        b = blue;
+        a = alpha;
+    }
+    
     @Override
     public String toString() {
         String text = "(" + r + ", " + g + ", " + b + ", " + a + ")";

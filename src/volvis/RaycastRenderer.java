@@ -228,18 +228,18 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         for (int j = 0; j < image.getHeight(); j++) {
             for (int i = 0; i < image.getWidth(); i++) {
                 int maxVal = 0;
-                for (double t = -maxDim; t <= maxDim; t += 1) {
+                for (double t = -maxDim; t <= maxDim; t++) {
                     pixelCoord[0] = uVec[0] * (i - imageCenter) * scale
                             + vVec[0] * (j - imageCenter) * scale
-                            + viewVec[0] * t * scale
+                            + viewVec[0] * t
                             + volumeCenter[0];
                     pixelCoord[1] = uVec[1] * (i - imageCenter) * scale
                             + vVec[1] * (j - imageCenter) * scale
-                            + viewVec[1] * t * scale
+                            + viewVec[1] * t
                             + volumeCenter[1];
                     pixelCoord[2] = uVec[2] * (i - imageCenter) * scale
                             + vVec[2] * (j - imageCenter) * scale
-                            + viewVec[2] * t * scale
+                            + viewVec[2] * t
                             + volumeCenter[2];
                     
                     int val = getVoxel(pixelCoord);
@@ -290,47 +290,48 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         // sample on a plane through the origin of the volume data
         double max = volume.getMaximum();
         double scale = this.getImageScale();
-        TFColor voxelColor1 = new TFColor(0,0,0,1);
+        TFColor voxelColor1 = new TFColor();
         TFColor voxelColor2 = new TFColor();
         double maxDim = volume.getDiagonalLength();
         //double maxDim = Math.max(Math.max(volume.getDimX(), volume.getDimY()), volume.getDimZ());
         
         for (int j = 0; j < image.getHeight(); j++) {
             for (int i = 0; i < image.getWidth(); i++) {
-                for(double t = -maxDim; t <= maxDim; t += 1) {
+                int maxVal = 0;
+                for(double t = -maxDim; t <= maxDim; t++) {
                     pixelCoord[0] = uVec[0] * (i - imageCenter) * scale
                             + vVec[0] * (j - imageCenter) * scale
                             + viewVec[0] * t
                             + volumeCenter[0];
                     pixelCoord[1] = uVec[1] * (i - imageCenter) * scale
                             + vVec[1] * (j - imageCenter) * scale
-                            + viewVec[1] * t * scale
+                            + viewVec[1] * t
                             + volumeCenter[1];
                     pixelCoord[2] = uVec[2] * (i - imageCenter) * scale
                             + vVec[2] * (j - imageCenter) * scale
-                            + viewVec[2] * t * scale
+                            + viewVec[2] * t
                             + volumeCenter[2];
                     
                     int val = getVoxel(pixelCoord);
+                    maxVal = maxVal > val ? maxVal : val;
                     
                     // Generate pixel color
                     if(useColor) {
                         // Apply the transfer function to obtain a color
-                        voxelColor2 = tFunc.getColor(val);
+                        voxelColor2 = tFunc.getColor(maxVal);
                     } else {
                         // Alternatively, map the intensity to a grey value by linear scaling
-                        voxelColor2.r = val/max;
+                        voxelColor2.r = maxVal/max;
                         voxelColor2.g = voxelColor2.r;
                         voxelColor2.b = voxelColor2.r;
-                        voxelColor2.a = val > 0 ? 1.0 : 0.0;  // this makes intensity 0 completely transparent and the rest opaque
+                        voxelColor2.a = maxVal > 0 ? 1.0 : 0.0;  // this makes intensity 0 completely transparent and the rest opaque
                     }
 
                     // Compositing
-                    voxelColor2.set(
-                            voxelColor2.a*voxelColor2.r + (1-voxelColor2.a)*voxelColor1.r,
-                            voxelColor2.a*voxelColor2.g + (1-voxelColor2.a)*voxelColor1.g,
-                            voxelColor2.a*voxelColor2.b + (1-voxelColor2.a)*voxelColor1.b,
-                            voxelColor2.a*voxelColor2.a + (1-voxelColor2.a)*voxelColor1.a);
+                    voxelColor2.r = voxelColor2.a*voxelColor2.r + (1-voxelColor2.a)*voxelColor1.r;
+                    voxelColor2.g = voxelColor2.a*voxelColor2.g + (1-voxelColor2.a)*voxelColor1.g;
+                    voxelColor2.b = voxelColor2.a*voxelColor2.b + (1-voxelColor2.a)*voxelColor1.b;
+                    voxelColor2.a = (voxelColor2.r + voxelColor2.g + voxelColor2.b) > 0 ? 1.0 : 0.0;//voxelColor2.a*voxelColor2.a + (1-voxelColor2.a)*voxelColor1.a;
                     voxelColor1.set(voxelColor2);
                 }
                 

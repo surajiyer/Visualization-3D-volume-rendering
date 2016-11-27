@@ -47,7 +47,8 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
         compositingButton = new javax.swing.JRadioButton();
         tf2dButton = new javax.swing.JRadioButton();
         shadingCheckbox = new javax.swing.JCheckBox();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        colorCheckbox = new javax.swing.JCheckBox();
+        trilCheckbox = new javax.swing.JCheckBox();
 
         jLabel1.setText("Rendering time (ms):");
 
@@ -93,10 +94,17 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
             }
         });
 
-        jToggleButton1.setText("Use Trilinear Interpolation");
-        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+        colorCheckbox.setText("Color");
+        colorCheckbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton1ActionPerformed(evt);
+                colorCheckboxActionPerformed(evt);
+            }
+        });
+
+        trilCheckbox.setText("Trilinear interpolation");
+        trilCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trilCheckboxActionPerformed(evt);
             }
         });
 
@@ -106,20 +114,19 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(compositingButton)
+                    .addComponent(tf2dButton)
+                    .addComponent(mipButton)
+                    .addComponent(slicerButton)
+                    .addComponent(shadingCheckbox)
+                    .addComponent(colorCheckbox)
+                    .addComponent(trilCheckbox)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(renderingSpeedLabel))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(compositingButton)
-                        .addComponent(tf2dButton)
-                        .addComponent(mipButton)
-                        .addComponent(slicerButton)
-                        .addComponent(shadingCheckbox)))
-                .addGap(29, 29, 29)
-                .addComponent(jToggleButton1)
-                .addContainerGap(129, Short.MAX_VALUE))
+                        .addComponent(renderingSpeedLabel)))
+                .addContainerGap(339, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -128,10 +135,8 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(renderingSpeedLabel))
-                .addGap(49, 49, 49)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(slicerButton)
-                    .addComponent(jToggleButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(slicerButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(mipButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -140,7 +145,11 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
                 .addComponent(tf2dButton)
                 .addGap(18, 18, 18)
                 .addComponent(shadingCheckbox)
-                .addContainerGap(134, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(colorCheckbox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(trilCheckbox)
+                .addContainerGap(127, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -153,8 +162,8 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_slicerButtonActionPerformed
 
     private void compositingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compositingButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not implemented.");
-//        this.renderer.setType("composite");
+        //JOptionPane.showMessageDialog(this, "Not implemented.");
+        this.renderer.setType("composite");
     }//GEN-LAST:event_compositingButtonActionPerformed
 
     private void tf2dButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf2dButtonActionPerformed
@@ -165,19 +174,24 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "Not implemented.");
     }//GEN-LAST:event_shadingCheckboxActionPerformed
 
-    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-        renderer.useTriLinearInterpolation(jToggleButton1.isSelected());
-    }//GEN-LAST:event_jToggleButton1ActionPerformed
+    private void colorCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorCheckboxActionPerformed
+        renderer.useColor(colorCheckbox.isSelected());
+    }//GEN-LAST:event_colorCheckboxActionPerformed
+
+    private void trilCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trilCheckboxActionPerformed
+        renderer.useTriLinearInterpolation(trilCheckbox.isSelected());
+    }//GEN-LAST:event_trilCheckboxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JCheckBox colorCheckbox;
     private javax.swing.JRadioButton compositingButton;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JRadioButton mipButton;
     private javax.swing.JLabel renderingSpeedLabel;
     private javax.swing.JCheckBox shadingCheckbox;
     private javax.swing.JRadioButton slicerButton;
     private javax.swing.JRadioButton tf2dButton;
+    private javax.swing.JCheckBox trilCheckbox;
     // End of variables declaration//GEN-END:variables
 }
