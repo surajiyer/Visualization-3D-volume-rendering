@@ -31,7 +31,7 @@ public class Visualization implements GLEventListener, TFChangeListener {
     int winWidth, winHeight;
     double fov = 20.0;
     TrackballInteractor trackball;
-        
+    
     public Visualization(GLAutoDrawable canvas) {
         this.renderers = new ArrayList<Renderer>();
         this.canvas = canvas;
@@ -59,11 +59,6 @@ public class Visualization implements GLEventListener, TFChangeListener {
     public void changed() {
         canvas.display();
     }
-
-
-
-    
-
 
    @Override
     public void init(GLAutoDrawable drawable) {

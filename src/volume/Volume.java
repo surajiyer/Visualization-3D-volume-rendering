@@ -83,6 +83,40 @@ public class Volume {
         }
         return maximum;
     }
+    
+    public boolean checkIntersection(double[] rayDir, double[] rayOrg, double[] t) {
+        rayDir[0] = rayDir[0] == 0 ? Double.MIN_VALUE : rayDir[0];
+        rayDir[1] = rayDir[1] == 0 ? Double.MIN_VALUE : rayDir[1];
+        rayDir[2] = rayDir[2] == 0 ? Double.MIN_VALUE : rayDir[2];
+        
+        double[] lb = {-dimX / 2d, -dimY / 2d, dimZ / 2d};
+        double[] rt = {dimX / 2d, dimY / 2d, -dimZ / 2d};
+        double[] dirfrac = {1d/rayDir[0], 1d/rayDir[1], 1d/rayDir[2]};
+        double t1 = (lb[0] - rayOrg[0])*dirfrac[0];
+        double t2 = (rt[0] - rayOrg[0])*dirfrac[0];
+        double t3 = (lb[1] - rayOrg[1])*dirfrac[1];
+        double t4 = (rt[1] - rayOrg[1])*dirfrac[1];
+        double t5 = (lb[2] - rayOrg[2])*dirfrac[2];
+        double t6 = (rt[2] - rayOrg[2])*dirfrac[2];
+        
+        double tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
+        double tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
+        
+        // if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behind us
+        if (tmax < 0) {
+            t[0] = tmax;
+            return false;
+        }
+
+        // if tmin > tmax, ray doesn't intersect AABB
+        if (tmin > tmax) {
+            t[0] = tmax;
+            return false;
+        }
+
+        t[0] = tmin;
+        return true;
+    }
  
     public int[] getHistogram() {
         return histogram;
