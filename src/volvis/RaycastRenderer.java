@@ -279,7 +279,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double[] viewVec = new double[3];
         VectorMath.setVector(uVec, viewMatrix[0], viewMatrix[4], viewMatrix[8]);
         VectorMath.setVector(vVec, viewMatrix[1], viewMatrix[5], viewMatrix[9]);
-        VectorMath.setVector(viewVec, viewMatrix[2], viewMatrix[6], viewMatrix[10]);
+        VectorMath.setVector(viewVec, -viewMatrix[2], -viewMatrix[6], -viewMatrix[10]);
         VectorMath.normalize(viewVec);
 
         // image is square
@@ -296,7 +296,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         TFColor voxelColor2 = new TFColor();
         double range = volume.getDiagonalLength();
         double[] rayCoord = new double[3];
-        double[] P = new double[2];
         double[] nearP = new double[3];
         double[] farP = new double[3];
         
@@ -319,35 +318,22 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 //                double tmin = P[0]; double tmax = P[1];
                 double[] v = VectorMath.subtract(nearP, farP);
                 
-                int maxVal = 0;
-                voxelColor1.set(0,0,0,0);
+                voxelColor1.set(0,0,0,1);
                 for(double t = 0.0; t <= 1.0; t+=0.01) {
                     pixelCoord[0] = farP[0] + v[0] * t;
                     pixelCoord[1] = farP[1] + v[1] * t;
                     pixelCoord[2] = farP[2] + v[2] * t;
                     
                     int val = getVoxel(pixelCoord);
-                    maxVal = val;//maxVal > val ? maxVal : val;
                     
-                    // Generate pixel color
-                    if(useColor) {
-                        // Apply the transfer function to obtain a color
-                        voxelColor2 = tFunc.getColor(maxVal);
-                    } else {
-                        // Alternatively, map the intensity to a grey value by linear scaling
-                        voxelColor2.r = maxVal/max;
-                        voxelColor2.g = voxelColor2.r;
-                        voxelColor2.b = voxelColor2.r;
-                        voxelColor2.a = maxVal > 0 ? 1.0 : 0.0;  // this makes intensity 0 completely transparent and the rest opaque
-                    }
-
+                    voxelColor2 = tFunc.getColor(val);
+                    
                     // Compositing
-                    voxelColor2.r = voxelColor2.a*voxelColor2.r + (1-voxelColor2.a)*voxelColor1.r;
-                    voxelColor2.g = voxelColor2.a*voxelColor2.g + (1-voxelColor2.a)*voxelColor1.g;
-                    voxelColor2.b = voxelColor2.a*voxelColor2.b + (1-voxelColor2.a)*voxelColor1.b;
+                    voxelColor1.r = voxelColor2.a*voxelColor2.r + (1-voxelColor2.a)*voxelColor1.r;
+                    voxelColor1.g = voxelColor2.a*voxelColor2.g + (1-voxelColor2.a)*voxelColor1.g;
+                    voxelColor1.b = voxelColor2.a*voxelColor2.b + (1-voxelColor2.a)*voxelColor1.b;
 //                    voxelColor2.a = (voxelColor2.r + voxelColor2.g + voxelColor2.b) > 0 ? 1.0 : 0.0;
-//                    voxelColor2.a = (1-voxelColor2.a)*voxelColor1.a;
-                    voxelColor1.set(voxelColor2);
+                    //voxelColor2.a = (1-voxelColor2.a)*voxelColor1.a;
                 }
                 
                 // BufferedImage expects a pixel color packed as ARGB in an int
