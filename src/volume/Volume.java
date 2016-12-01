@@ -90,11 +90,8 @@ public class Volume {
         rayDir[1] = rayDir[1] == 0 ? 0.001 : rayDir[1];
         rayDir[2] = rayDir[2] == 0 ? 0.001 : rayDir[2];
         
-        double[] lb = {-dimX / 2d, -dimY / 2d, -dimZ / 2d};
-        double[] rt = {dimX / 2d, dimY / 2d, dimZ / 2d};
-        double[] volumeCenter = new double[]{dimX / 2d, dimY / 2d, dimZ / 2d};
-        lb = VectorMath.add(volumeCenter, lb);
-        rt = VectorMath.add(volumeCenter, rt);
+        double[] lb = {0d, 0d, 0d};
+        double[] rt = {dimX, dimY, dimZ};
         double[] dirfrac = {1d/rayDir[0], 1d/rayDir[1], 1d/rayDir[2]};
         double t1 = (lb[0] - rayOrg[0])*dirfrac[0];
         double t2 = (rt[0] - rayOrg[0])*dirfrac[0];
@@ -122,11 +119,11 @@ public class Volume {
     }
     
     public boolean checkIntersection(double[] rayDir, double[] rayOrg, double[] nearP, double[] farP) {
-        double[] P = new double[2];
-        boolean result = this.checkIntersection(rayDir, rayOrg, P);
-        nearP[0] = rayOrg[0] + P[0]*rayDir[0]; farP[0] = rayOrg[0] + P[1]*rayDir[0];
-        nearP[1] = rayOrg[1] + P[0]*rayDir[1]; farP[1] = rayOrg[1] + P[1]*rayDir[1];
-        nearP[2] = rayOrg[2] + P[0]*rayDir[2]; farP[2] = rayOrg[2] + P[1]*rayDir[2];
+        double[] t = new double[2];
+        boolean result = this.checkIntersection(rayDir, rayOrg, t);
+        nearP[0] = rayOrg[0] + t[0]*rayDir[0]; farP[0] = rayOrg[0] + t[1]*rayDir[0];
+        nearP[1] = rayOrg[1] + t[0]*rayDir[1]; farP[1] = rayOrg[1] + t[1]*rayDir[1];
+        nearP[2] = rayOrg[2] + t[0]*rayDir[2]; farP[2] = rayOrg[2] + t[1]*rayDir[2];
         return result;
     }
  

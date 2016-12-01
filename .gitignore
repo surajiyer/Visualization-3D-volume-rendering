@@ -10,6 +10,17 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-/nbproject/private/
-/build/
-/dist/
+
+# ignore these folders
+lib/
+nbproject/
+.idea/
+VolVis.iml
+build/
+out/
+set1_data/
+test/
+
+# ignore these files
+build.xml
+manifest.mf

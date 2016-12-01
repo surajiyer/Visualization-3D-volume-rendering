@@ -47,7 +47,6 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
         compositingButton = new javax.swing.JRadioButton();
         tf2dButton = new javax.swing.JRadioButton();
         shadingCheckbox = new javax.swing.JCheckBox();
-        colorCheckbox = new javax.swing.JCheckBox();
         trilCheckbox = new javax.swing.JCheckBox();
 
         jLabel1.setText("Rendering time (ms):");
@@ -94,13 +93,6 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
             }
         });
 
-        colorCheckbox.setText("Color");
-        colorCheckbox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                colorCheckboxActionPerformed(evt);
-            }
-        });
-
         trilCheckbox.setText("Trilinear interpolation");
         trilCheckbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -120,7 +112,6 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
                     .addComponent(mipButton)
                     .addComponent(slicerButton)
                     .addComponent(shadingCheckbox)
-                    .addComponent(colorCheckbox)
                     .addComponent(trilCheckbox)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -146,10 +137,8 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(shadingCheckbox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(colorCheckbox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(trilCheckbox)
-                .addContainerGap(127, Short.MAX_VALUE))
+                .addContainerGap(152, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -174,17 +163,12 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "Not implemented.");
     }//GEN-LAST:event_shadingCheckboxActionPerformed
 
-    private void colorCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorCheckboxActionPerformed
-        renderer.useColor(colorCheckbox.isSelected());
-    }//GEN-LAST:event_colorCheckboxActionPerformed
-
     private void trilCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trilCheckboxActionPerformed
         renderer.useTriLinearInterpolation(trilCheckbox.isSelected());
     }//GEN-LAST:event_trilCheckboxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JCheckBox colorCheckbox;
     private javax.swing.JRadioButton compositingButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JRadioButton mipButton;

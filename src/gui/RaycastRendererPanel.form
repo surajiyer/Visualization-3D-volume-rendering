@@ -28,7 +28,6 @@
                   <Component id="mipButton" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="slicerButton" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="shadingCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="colorCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="trilCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
@@ -59,10 +58,8 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="shadingCheckbox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="colorCheckbox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
               <Component id="trilCheckbox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="127" max="32767" attributes="0"/>
+              <EmptySpace pref="152" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -129,14 +126,6 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="shadingCheckboxActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="colorCheckbox">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Color"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="colorCheckboxActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="trilCheckbox">
