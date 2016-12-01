@@ -280,6 +280,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         VectorMath.setVector(uVec, viewMatrix[0], viewMatrix[4], viewMatrix[8]);
         VectorMath.setVector(vVec, viewMatrix[1], viewMatrix[5], viewMatrix[9]);
         VectorMath.setVector(viewVec, viewMatrix[2], viewMatrix[6], viewMatrix[10]);
+        VectorMath.normalize(viewVec);
 
         // image is square
         int imageCenter = image.getWidth() / 2;
@@ -294,25 +295,36 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         TFColor voxelColor1 = new TFColor();
         TFColor voxelColor2 = new TFColor();
         double range = volume.getDiagonalLength();
-        //double range = Math.max(Math.max(volume.getDimX(), volume.getDimY()), volume.getDimZ());
+        double[] rayCoord = new double[3];
+        double[] P = new double[2];
+        double[] nearP = new double[3];
+        double[] farP = new double[3];
         
         for (int j = 0; j < image.getHeight(); j++) {
             for (int i = 0; i < image.getWidth(); i++) {
+                // Create a ray
+                rayCoord[0] = uVec[0] * (i - imageCenter) * scale
+                        + vVec[0] * (j - imageCenter) * scale
+                        - viewVec[0]*range + volumeCenter[0];
+                rayCoord[1] = uVec[1] * (i - imageCenter) * scale
+                        + vVec[1] * (j - imageCenter) * scale
+                        - viewVec[1]*range + volumeCenter[1];
+                rayCoord[2] = uVec[2] * (i - imageCenter) * scale
+                        + vVec[2] * (j - imageCenter) * scale
+                        - viewVec[2]*range + volumeCenter[2];
+                
+                // Check intersection points with the ray
+                boolean isIntersection = volume.checkIntersection(viewVec, rayCoord, nearP, farP);
+                if(!isIntersection) continue;
+//                double tmin = P[0]; double tmax = P[1];
+                double[] v = VectorMath.subtract(nearP, farP);
+                
                 int maxVal = 0;
-                voxelColor1.set(1,1,1,1);
-                for(double t = 0.5*range; t >= -0.5*range; t--) {
-                    pixelCoord[0] = uVec[0] * (i - imageCenter) * scale
-                            + vVec[0] * (j - imageCenter) * scale
-                            + viewVec[0] * t
-                            + volumeCenter[0];
-                    pixelCoord[1] = uVec[1] * (i - imageCenter) * scale
-                            + vVec[1] * (j - imageCenter) * scale
-                            + viewVec[1] * t
-                            + volumeCenter[1];
-                    pixelCoord[2] = uVec[2] * (i - imageCenter) * scale
-                            + vVec[2] * (j - imageCenter) * scale
-                            + viewVec[2] * t
-                            + volumeCenter[2];
+                voxelColor1.set(0,0,0,0);
+                for(double t = 0.0; t <= 1.0; t+=0.01) {
+                    pixelCoord[0] = farP[0] + v[0] * t;
+                    pixelCoord[1] = farP[1] + v[1] * t;
+                    pixelCoord[2] = farP[2] + v[2] * t;
                     
                     int val = getVoxel(pixelCoord);
                     maxVal = val;//maxVal > val ? maxVal : val;
@@ -334,7 +346,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     voxelColor2.g = voxelColor2.a*voxelColor2.g + (1-voxelColor2.a)*voxelColor1.g;
                     voxelColor2.b = voxelColor2.a*voxelColor2.b + (1-voxelColor2.a)*voxelColor1.b;
 //                    voxelColor2.a = (voxelColor2.r + voxelColor2.g + voxelColor2.b) > 0 ? 1.0 : 0.0;
-                    voxelColor2.a = voxelColor2.a*voxelColor2.a + (1-voxelColor2.a)*voxelColor1.a;
+//                    voxelColor2.a = (1-voxelColor2.a)*voxelColor1.a;
                     voxelColor1.set(voxelColor2);
                 }
                 
@@ -360,19 +372,19 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         gl.glEnable(GL.GL_BLEND);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
-        gl.glBegin(GL.GL_LINE_LOOP);
-        gl.glVertex3d(-volume.getDimX() / 2.0, -volume.getDimY() / 2.0, volume.getDimZ() / 2.0);
-        gl.glVertex3d(-volume.getDimX() / 2.0, volume.getDimY() / 2.0, volume.getDimZ() / 2.0);
-        gl.glVertex3d(volume.getDimX() / 2.0, volume.getDimY() / 2.0, volume.getDimZ() / 2.0);
-        gl.glVertex3d(volume.getDimX() / 2.0, -volume.getDimY() / 2.0, volume.getDimZ() / 2.0);
-        gl.glEnd();
+//        gl.glBegin(GL.GL_LINE_LOOP);
+//        gl.glVertex3d(-volume.getDimX() / 2.0, -volume.getDimY() / 2.0, volume.getDimZ() / 2.0);
+//        gl.glVertex3d(-volume.getDimX() / 2.0, volume.getDimY() / 2.0, volume.getDimZ() / 2.0);
+//        gl.glVertex3d(volume.getDimX() / 2.0, volume.getDimY() / 2.0, volume.getDimZ() / 2.0);
+//        gl.glVertex3d(volume.getDimX() / 2.0, -volume.getDimY() / 2.0, volume.getDimZ() / 2.0);
+//        gl.glEnd();
 
-        gl.glBegin(GL.GL_LINE_LOOP);
-        gl.glVertex3d(-volume.getDimX() / 2.0, -volume.getDimY() / 2.0, -volume.getDimZ() / 2.0);
-        gl.glVertex3d(-volume.getDimX() / 2.0, volume.getDimY() / 2.0, -volume.getDimZ() / 2.0);
-        gl.glVertex3d(volume.getDimX() / 2.0, volume.getDimY() / 2.0, -volume.getDimZ() / 2.0);
-        gl.glVertex3d(volume.getDimX() / 2.0, -volume.getDimY() / 2.0, -volume.getDimZ() / 2.0);
-        gl.glEnd();
+//        gl.glBegin(GL.GL_LINE_LOOP);
+//        gl.glVertex3d(-volume.getDimX() / 2.0, -volume.getDimY() / 2.0, -volume.getDimZ() / 2.0);
+//        gl.glVertex3d(-volume.getDimX() / 2.0, volume.getDimY() / 2.0, -volume.getDimZ() / 2.0);
+//        gl.glVertex3d(volume.getDimX() / 2.0, volume.getDimY() / 2.0, -volume.getDimZ() / 2.0);
+//        gl.glVertex3d(volume.getDimX() / 2.0, -volume.getDimY() / 2.0, -volume.getDimZ() / 2.0);
+//        gl.glEnd();
 
         gl.glBegin(GL.GL_LINE_LOOP);
         gl.glVertex3d(volume.getDimX() / 2.0, -volume.getDimY() / 2.0, -volume.getDimZ() / 2.0);

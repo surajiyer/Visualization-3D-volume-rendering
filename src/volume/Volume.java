@@ -6,6 +6,8 @@ package volume;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import util.VectorMath;
 
 /**
  *
@@ -32,7 +34,6 @@ public class Volume {
         } catch (IOException ex) {
             System.out.println("IO exception");
         }
-        
     }
     
     
@@ -84,13 +85,16 @@ public class Volume {
         return maximum;
     }
     
-    public boolean checkIntersection(double[] rayDir, double[] rayOrg, double[] t) {
-        rayDir[0] = rayDir[0] == 0 ? Double.MIN_VALUE : rayDir[0];
-        rayDir[1] = rayDir[1] == 0 ? Double.MIN_VALUE : rayDir[1];
-        rayDir[2] = rayDir[2] == 0 ? Double.MIN_VALUE : rayDir[2];
+    public boolean checkIntersection(double[] rayDir, double[] rayOrg, double[] P) {
+        rayDir[0] = rayDir[0] == 0 ? 0.001 : rayDir[0];
+        rayDir[1] = rayDir[1] == 0 ? 0.001 : rayDir[1];
+        rayDir[2] = rayDir[2] == 0 ? 0.001 : rayDir[2];
         
-        double[] lb = {-dimX / 2d, -dimY / 2d, dimZ / 2d};
-        double[] rt = {dimX / 2d, dimY / 2d, -dimZ / 2d};
+        double[] lb = {-dimX / 2d, -dimY / 2d, -dimZ / 2d};
+        double[] rt = {dimX / 2d, dimY / 2d, dimZ / 2d};
+        double[] volumeCenter = new double[]{dimX / 2d, dimY / 2d, dimZ / 2d};
+        lb = VectorMath.add(volumeCenter, lb);
+        rt = VectorMath.add(volumeCenter, rt);
         double[] dirfrac = {1d/rayDir[0], 1d/rayDir[1], 1d/rayDir[2]};
         double t1 = (lb[0] - rayOrg[0])*dirfrac[0];
         double t2 = (rt[0] - rayOrg[0])*dirfrac[0];
@@ -101,21 +105,29 @@ public class Volume {
         
         double tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
         double tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
+        P[0] = tmin; P[1] = tmax;
         
         // if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behind us
         if (tmax < 0) {
-            t[0] = tmax;
             return false;
         }
 
         // if tmin > tmax, ray doesn't intersect AABB
         if (tmin > tmax) {
-            t[0] = tmax;
             return false;
         }
-
-        t[0] = tmin;
+           
+        // if tmin < 0, origin is inside or after the box
         return true;
+    }
+    
+    public boolean checkIntersection(double[] rayDir, double[] rayOrg, double[] nearP, double[] farP) {
+        double[] P = new double[2];
+        boolean result = this.checkIntersection(rayDir, rayOrg, P);
+        nearP[0] = rayOrg[0] + P[0]*rayDir[0]; farP[0] = rayOrg[0] + P[1]*rayDir[0];
+        nearP[1] = rayOrg[1] + P[0]*rayDir[1]; farP[1] = rayOrg[1] + P[1]*rayDir[1];
+        nearP[2] = rayOrg[2] + P[0]*rayDir[2]; farP[2] = rayOrg[2] + P[1]*rayDir[2];
+        return result;
     }
  
     public int[] getHistogram() {
