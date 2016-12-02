@@ -17,6 +17,7 @@ import util.TFChangeListener;
 import util.VectorMath;
 import volume.GradientVolume;
 import volume.Volume;
+import volume.VoxelGradient;
 
 /**
  * @author michel
@@ -35,6 +36,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     private double[] viewMatrix = new double[4 * 4];
     String type = "slicer";
     boolean useTriLinearInterpolation = false;
+    boolean useShading = false;
     Light light_0;
 
     public RaycastRenderer() {
@@ -94,15 +96,19 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         this.changed();
     }
 
-    public void useTriLinearInterpolation(boolean use) {
+    public void setUseTriLinearInterpolation(boolean use) {
         this.useTriLinearInterpolation = use;
+        this.changed();
+    }
+
+    public void setUseShading(boolean use) {
+        this.useShading = use;
         this.changed();
     }
 
     public double getImageScale() {
         return normal.getWidth() / ((image == normal ? 1.0 : 2.0) * image.getWidth());
     }
-
 
     short getVoxel(double[] coord) {
         if (coord[0] < 0 || coord[0] >= volume.getDimX() - 1
@@ -138,7 +144,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     alpha * beta * gamma * volume.getVoxel(x2, y2, z2));
         }
     }
-
 
     void slicer(double[] viewMatrix) {
         // vector uVec and vVec define a plane through the origin, 
@@ -381,6 +386,21 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         }
     }
 
+    TFColor getShadedColor(double[] coord, TFColor voxelColor, double[] viewVec) {
+        if (coord[0] < 0 || coord[0] >= volume.getDimX() - 1
+                || coord[1] < 0 || coord[1] >= volume.getDimY() - 1
+                || coord[2] < 0 || coord[2] >= volume.getDimZ() - 1) {
+            return new TFColor(0,0,0,1);
+        }
+
+        VoxelGradient vg = gradients.getGradient(
+                (int) Math.floor(coord[0]),
+                (int) Math.floor(coord[1]),
+                (int) Math.floor(coord[2]));
+        light_0.diffuse = voxelColor;
+        return light_0.getColor(viewVec, vg.getNormal());
+    }
+
     void transfer2D(double[] viewMatrix) {
         // vector uVec and vVec define a plane through the origin, 
         // perpendicular to the view vector viewVec
@@ -436,15 +456,15 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     // apply the transfer function to obtain a color
                     voxelColor = tFunc.getColor(val);
 
+                    // phong shading
+                    if(useShading) {
+                        voxelColor = getShadedColor(pixelCoord, voxelColor, viewVec);
+                    }
+
                     // compositing
                     voxelColor1.r = voxelColor.a * voxelColor.r + (1 - voxelColor.a) * voxelColor1.r;
                     voxelColor1.g = voxelColor.a * voxelColor.g + (1 - voxelColor.a) * voxelColor1.g;
                     voxelColor1.b = voxelColor.a * voxelColor.b + (1 - voxelColor.a) * voxelColor1.b;
-
-                    // phong shading
-                    double[] normal = new double[]{0, 0, 1};
-                    light_0.diffuse = voxelColor1;
-                    voxelColor1 = light_0.getColor(viewVec, normal);
                 }
 
                 // BufferedImage expects a pixel color packed as ARGB in an int

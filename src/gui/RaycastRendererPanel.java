@@ -156,15 +156,15 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_compositingButtonActionPerformed
 
     private void tf2dButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf2dButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not implemented.");
+        this.renderer.setType("transfer2D");
     }//GEN-LAST:event_tf2dButtonActionPerformed
 
     private void shadingCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shadingCheckboxActionPerformed
-        JOptionPane.showMessageDialog(this, "Not implemented.");
+        renderer.setUseShading(shadingCheckbox.isSelected());
     }//GEN-LAST:event_shadingCheckboxActionPerformed
 
     private void trilCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trilCheckboxActionPerformed
-        renderer.useTriLinearInterpolation(trilCheckbox.isSelected());
+        renderer.setUseTriLinearInterpolation(trilCheckbox.isSelected());
     }//GEN-LAST:event_trilCheckboxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

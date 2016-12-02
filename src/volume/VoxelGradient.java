@@ -23,5 +23,9 @@ public class VoxelGradient {
         z = gz;
         mag = (float) Math.sqrt(x*x + y*y + z*z);
     }
-    
+
+    public double[] getNormal() {
+        mag = (mag == 0.0f) ? 0.001f : mag;
+        return new double[] {-x/mag, -y/mag, -z/mag};
+    }
 }
