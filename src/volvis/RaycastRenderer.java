@@ -70,7 +70,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         tFunc = new TransferFunction(volume.getMinimum(), volume.getMaximum());
 
         // uncomment this to initialize the TF with good starting values for the orange dataset 
-        tFunc.setTestFunc();
+        //tFunc.setTestFunc();
 
         tFunc.addTFChangeListener(this);
         tfEditor = new TransferFunctionEditor(tFunc, volume.getHistogram());
@@ -389,9 +389,9 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     }
 
     TFColor getShadedColor(double[] coord, TFColor voxelColor, double[] viewVec) {
-        if (coord[0] < 0 || coord[0] >= volume.getDimX() - 1
-                || coord[1] < 0 || coord[1] >= volume.getDimY() - 1
-                || coord[2] < 0 || coord[2] >= volume.getDimZ() - 1) {
+        if (coord[0] < 0 || coord[0] >= volume.getDimX()
+                || coord[1] < 0 || coord[1] >= volume.getDimY()
+                || coord[2] < 0 || coord[2] >= volume.getDimZ()) {
             return new TFColor(0, 0, 0, 1);
         }
 
@@ -402,7 +402,53 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         light_0.diffuse = voxelColor;
         return light_0.getColor(viewVec, vg.getNormal());
     }
+    
+    double getLevoyOpacity(float gradient, int voxelValue){
+        TransferFunction2DEditor.TriangleWidget tw = this.tfEditor2D.triangleWidget;
+        if( gradient == 0 && voxelValue == tw.baseIntensity)
+            return 1;
+        else if(gradient >0 && 
+                (voxelValue - tw.radius*gradient) <= tw.baseIntensity &&
+                tw.baseIntensity <= (voxelValue + tw.radius*gradient) )
+            return 1 - Math.abs((tw.baseIntensity - voxelValue)/gradient)/tw.radius;
+        else
+            return 0;
+    }
+    
+    float getGradient(double[] coord){
+        if (coord[0] < 0 || coord[0] >= volume.getDimX() - 1
+                || coord[1] < 0 || coord[1] >= volume.getDimY() - 1
+                || coord[2] < 0 || coord[2] >= volume.getDimZ() - 1) {
+            return 0;
+        }
 
+        if (useTriLinearInterpolation) {
+            int x = (int) Math.floor(coord[0]);
+            int y = (int) Math.floor(coord[1]);
+            int z = (int) Math.floor(coord[2]);
+            return gradients.getGradient(x, y, z).mag;
+        } else {
+            int x1 = (int) Math.floor(coord[0]);
+            int y1 = (int) Math.floor(coord[1]);
+            int z1 = (int) Math.floor(coord[2]);
+            int x2 = x1 + 1;//(int) Math.ceil(coord[0]);
+            int y2 = y1 + 1;//(int) Math.ceil(coord[1]);
+            int z2 = z1 + 1;//(int) Math.ceil(coord[2]);
+
+            double alpha = coord[0] - x1;
+            double beta = coord[1] - y1;
+            double gamma = coord[2] - z1;
+
+            return (short) ((1 - alpha) * (1 - beta) * (1 - gamma) * gradients.getGradient(x1, y1, z1).mag +
+                    alpha * (1 - beta) * (1 - gamma) * gradients.getGradient(x2, y1, z1).mag +
+                    (1 - alpha) * beta * (1 - gamma) * gradients.getGradient(x1, y2, z1).mag +
+                    alpha * beta * (1 - gamma) *gradients.getGradient(x2, y2, z1).mag +
+                    (1 - alpha) * (1 - beta) * gamma * gradients.getGradient(x1, y1, z2).mag +
+                    alpha * (1 - beta) * gamma * gradients.getGradient(x2, y1, z2).mag +
+                    (1 - alpha) * beta * gamma * gradients.getGradient(x1, y2, z2).mag +
+                    alpha * beta * gamma * gradients.getGradient(x2, y2, z2).mag);
+        }
+    }
     void transfer2D(double[] viewMatrix) {
         // vector uVec and vVec define a plane through the origin, 
         // perpendicular to the view vector viewVec
@@ -429,7 +475,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double[] rayCoord = new double[3];
         double[] nearP = new double[3];
         double[] farP = new double[3];
-
+       
         for (int j = 0; j < image.getHeight(); j++) {
             for (int i = 0; i < image.getWidth(); i++) {
                 // Create a ray
@@ -464,6 +510,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     }
 
                     // compositing
+                    voxelColor.a = this.getLevoyOpacity(this.getGradient(pixelCoord), val);
                     voxelColor1.r = voxelColor.a * voxelColor.r + (1 - voxelColor.a) * voxelColor1.r;
                     voxelColor1.g = voxelColor.a * voxelColor.g + (1 - voxelColor.a) * voxelColor1.g;
                     voxelColor1.b = voxelColor.a * voxelColor.b + (1 - voxelColor.a) * voxelColor1.b;
