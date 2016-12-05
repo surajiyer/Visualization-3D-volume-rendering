@@ -79,7 +79,6 @@ public class TransferFunctionEditor extends javax.swing.JPanel {
 
         scalarTextField.setEditable(false);
         scalarTextField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        scalarTextField.setFocusTraversalKeysEnabled(false);
         scalarTextField.setFocusable(false);
         scalarTextField.setMaximumSize(new java.awt.Dimension(84, 28));
         scalarTextField.setMinimumSize(new java.awt.Dimension(84, 28));
@@ -87,10 +86,14 @@ public class TransferFunctionEditor extends javax.swing.JPanel {
         opacityTextField.setEditable(false);
         opacityTextField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         opacityTextField.setToolTipText("");
-        opacityTextField.setFocusTraversalKeysEnabled(false);
         opacityTextField.setFocusable(false);
         opacityTextField.setMaximumSize(new java.awt.Dimension(84, 28));
         opacityTextField.setMinimumSize(new java.awt.Dimension(84, 28));
+        opacityTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                opacityTextFieldActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Opacity");
 
@@ -192,6 +195,11 @@ public class TransferFunctionEditor extends javax.swing.JPanel {
         }
 
     }//GEN-LAST:event_colorButtonActionPerformed
+
+    private void opacityTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_opacityTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_opacityTextFieldActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton colorButton;
     private javax.swing.JPanel histogramPanel;

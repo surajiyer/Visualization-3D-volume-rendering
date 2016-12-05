@@ -405,14 +405,19 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     
     double getLevoyOpacity(float gradient, int voxelValue){
         TransferFunction2DEditor.TriangleWidget tw = this.tfEditor2D.triangleWidget;
-        if( gradient == 0 && voxelValue == tw.baseIntensity)
-            return 1;
-        else if(gradient >0 && 
-                (voxelValue - tw.radius*gradient) <= tw.baseIntensity &&
-                tw.baseIntensity <= (voxelValue + tw.radius*gradient) )
-            return 1 - Math.abs((tw.baseIntensity - voxelValue)/gradient)/tw.radius;
-        else
+        System.out.println(tw.color);
+        //tw.color.a = 0.3;
+        if (gradient > tw.maxGradient || gradient < tw.minGradient)
             return 0;
+        else 
+            if( gradient == 0 && voxelValue == tw.baseIntensity){  
+                return tw.color.a;
+            }else if(gradient >0 && 
+                    (voxelValue - tw.radius*gradient) <= tw.baseIntensity &&
+                    tw.baseIntensity <= (voxelValue + tw.radius*gradient) )
+                return tw.color.a * (1 - Math.abs((tw.baseIntensity - voxelValue)/gradient)/tw.radius );
+            else
+                return 0;
     }
     
     float getGradient(double[] coord){
@@ -502,7 +507,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     int val = getVoxel(pixelCoord);
 
                     // apply the transfer function to obtain a color
-                    voxelColor = tFunc.getColor(val);
+                    voxelColor = this.tfEditor2D.triangleWidget.color;
 
                     // phong shading
                     if (useShading) {
