@@ -23,11 +23,16 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="boundingBoxCheckbox" min="-2" max="-2" attributes="0"/>
                   <Component id="compositingButton" min="-2" max="-2" attributes="0"/>
                   <Component id="tf2dButton" min="-2" max="-2" attributes="0"/>
                   <Component id="mipButton" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="slicerButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="shadingCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="shadingCheckbox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
+                      <Component id="simplifiedShadingCheckbox" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <Component id="trilCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
@@ -35,7 +40,7 @@
                       <Component id="renderingSpeedLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="339" max="32767" attributes="0"/>
+              <EmptySpace pref="183" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -56,10 +61,15 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="tf2dButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="shadingCheckbox" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="shadingCheckbox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="simplifiedShadingCheckbox" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="trilCheckbox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="152" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="boundingBoxCheckbox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="127" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -135,6 +145,28 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trilCheckboxActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="boundingBoxCheckbox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Bounding box"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boundingBoxCheckboxActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="boundingBoxCheckbox.setSelected(true);"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="simplifiedShadingCheckbox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Use Simplified shading"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="simplifiedShadingCheckboxActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="simplifiedShadingCheckbox.setEnabled(shadingCheckbox.isSelected());"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

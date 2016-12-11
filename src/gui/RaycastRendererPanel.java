@@ -48,6 +48,8 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
         tf2dButton = new javax.swing.JRadioButton();
         shadingCheckbox = new javax.swing.JCheckBox();
         trilCheckbox = new javax.swing.JCheckBox();
+        boundingBoxCheckbox = new javax.swing.JCheckBox();
+        simplifiedShadingCheckbox = new javax.swing.JCheckBox();
 
         jLabel1.setText("Rendering time (ms):");
 
@@ -100,6 +102,22 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
             }
         });
 
+        boundingBoxCheckbox.setText("Bounding box");
+        boundingBoxCheckbox.setSelected(true);
+        boundingBoxCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boundingBoxCheckboxActionPerformed(evt);
+            }
+        });
+
+        simplifiedShadingCheckbox.setText("Use Simplified shading");
+        simplifiedShadingCheckbox.setEnabled(shadingCheckbox.isSelected());
+        simplifiedShadingCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                simplifiedShadingCheckboxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -107,17 +125,21 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(boundingBoxCheckbox)
                     .addComponent(compositingButton)
                     .addComponent(tf2dButton)
                     .addComponent(mipButton)
                     .addComponent(slicerButton)
-                    .addComponent(shadingCheckbox)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(shadingCheckbox)
+                        .addGap(51, 51, 51)
+                        .addComponent(simplifiedShadingCheckbox))
                     .addComponent(trilCheckbox)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(renderingSpeedLabel)))
-                .addContainerGap(339, Short.MAX_VALUE))
+                .addContainerGap(183, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,10 +157,14 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tf2dButton)
                 .addGap(18, 18, 18)
-                .addComponent(shadingCheckbox)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(shadingCheckbox)
+                    .addComponent(simplifiedShadingCheckbox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(trilCheckbox)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(boundingBoxCheckbox)
+                .addContainerGap(127, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -160,6 +186,7 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_tf2dButtonActionPerformed
 
     private void shadingCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shadingCheckboxActionPerformed
+        simplifiedShadingCheckbox.setEnabled(shadingCheckbox.isSelected());
         renderer.setUseShading(shadingCheckbox.isSelected());
     }//GEN-LAST:event_shadingCheckboxActionPerformed
 
@@ -167,13 +194,23 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
         renderer.setUseTriLinearInterpolation(trilCheckbox.isSelected());
     }//GEN-LAST:event_trilCheckboxActionPerformed
 
+    private void boundingBoxCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boundingBoxCheckboxActionPerformed
+        renderer.setShowBoundingBox(boundingBoxCheckbox.isSelected());
+    }//GEN-LAST:event_boundingBoxCheckboxActionPerformed
+
+    private void simplifiedShadingCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simplifiedShadingCheckboxActionPerformed
+        renderer.setUseSimplifiedShading(simplifiedShadingCheckbox.isSelected());
+    }//GEN-LAST:event_simplifiedShadingCheckboxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox boundingBoxCheckbox;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JRadioButton compositingButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JRadioButton mipButton;
     private javax.swing.JLabel renderingSpeedLabel;
     private javax.swing.JCheckBox shadingCheckbox;
+    private javax.swing.JCheckBox simplifiedShadingCheckbox;
     private javax.swing.JRadioButton slicerButton;
     private javax.swing.JRadioButton tf2dButton;
     private javax.swing.JCheckBox trilCheckbox;

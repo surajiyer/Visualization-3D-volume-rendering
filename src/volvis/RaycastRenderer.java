@@ -38,6 +38,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     private String type = "slicer";
     private boolean useTriLinearInterpolation = false;
     private boolean useShading = false;
+    private boolean showBoundingBox = true;
+    private boolean useSimplifiedShading = false;
     double scale;
     private Light light_0;
 
@@ -70,7 +72,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         tFunc = new TransferFunction(volume.getMinimum(), volume.getMaximum());
 
         // uncomment this to initialize the TF with good starting values for the orange dataset 
-        tFunc.setTestFunc();
+        //tFunc.setTestFunc();
 
         tFunc.addTFChangeListener(this);
         tfEditor = new TransferFunctionEditor(tFunc, volume.getHistogram());
@@ -108,6 +110,16 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         this.changed();
     }
 
+    public void setUseSimplifiedShading(boolean use) {
+        this.useSimplifiedShading = use;
+        this.changed();
+    }
+
+    public void setShowBoundingBox(boolean show) {
+        this.showBoundingBox = show;
+        this.changed();
+    }
+
     private double getImageScale() {
         return normal.getWidth() / ((image == normal ? 1.0 : 2.0) * image.getWidth());
     }
@@ -120,11 +132,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         }
 
         if (useTriLinearInterpolation) {
-            int x = (int) Math.floor(coord[0]);
-            int y = (int) Math.floor(coord[1]);
-            int z = (int) Math.floor(coord[2]);
-            return volume.getVoxel(x, y, z);
-        } else {
             int x1 = (int) Math.floor(coord[0]);
             int y1 = (int) Math.floor(coord[1]);
             int z1 = (int) Math.floor(coord[2]);
@@ -144,6 +151,11 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     alpha * (1 - beta) * gamma * volume.getVoxel(x2, y1, z2) +
                     (1 - alpha) * beta * gamma * volume.getVoxel(x1, y2, z2) +
                     alpha * beta * gamma * volume.getVoxel(x2, y2, z2));
+        } else {
+            int x = (int) Math.floor(coord[0]);
+            int y = (int) Math.floor(coord[1]);
+            int z = (int) Math.floor(coord[2]);
+            return volume.getVoxel(x, y, z);
         }
     }
 
@@ -256,19 +268,16 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     maxVal = maxVal > val ? maxVal : val;
                 }
 
-//                for (double t = 0.5*diagLen; t >= -0.5*diagLen; t--) {
+//                for (double t = -0.5*diagLen; t <= 0.5*diagLen; t++) {
 //                    pixelCoord[0] = uVec[0] * (i - imageCenter) * scale
 //                            + vVec[0] * (j - imageCenter) * scale
-//                            + viewVec[0] * t
-//                            + volumeCenter[0];
+//                            + viewVec[0] * t + volumeCenter[0];
 //                    pixelCoord[1] = uVec[1] * (i - imageCenter) * scale
 //                            + vVec[1] * (j - imageCenter) * scale
-//                            + viewVec[1] * t
-//                            + volumeCenter[1];
+//                            + viewVec[1] * t + volumeCenter[1];
 //                    pixelCoord[2] = uVec[2] * (i - imageCenter) * scale
 //                            + vVec[2] * (j - imageCenter) * scale
-//                            + viewVec[2] * t
-//                            + volumeCenter[2];
+//                            + viewVec[2] * t + volumeCenter[2];
 //                    
 //                    int val = getVoxel(pixelCoord);
 //                    maxVal = maxVal > val ? maxVal : val;
@@ -295,7 +304,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         if (coord[0] < 0 || coord[0] >= volume.getDimX()
                 || coord[1] < 0 || coord[1] >= volume.getDimY()
                 || coord[2] < 0 || coord[2] >= volume.getDimZ()) {
-            return new TFColor(0, 0, 0, 1);
+            voxelColor.set(0, 0, 0, voxelColor.a);
+            return voxelColor;
         }
 
         VoxelGradient vg = gradients.getGradient(
@@ -303,7 +313,11 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 (int) Math.floor(coord[1]),
                 (int) Math.floor(coord[2]));
         light_0.setDiffuse(voxelColor);
-        return light_0.getColor(viewVec, vg.getNormal(), viewVec);
+        if (useSimplifiedShading) {
+            return light_0.getColorSimplified(viewVec, vg.getNormal(), viewVec);
+        } else {
+            return light_0.getColor(viewVec, vg.getNormal(), viewVec);
+        }
     }
 
     private void composite(double[] viewMatrix) {
@@ -394,9 +408,10 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             return tw.color.a;
         } else if (gradient > 0 &&
                 (voxelValue - tw.radius * gradient) <= tw.baseIntensity &&
-                tw.baseIntensity <= (voxelValue + tw.radius * gradient))
-            return tw.color.a * (1 - Math.abs((tw.baseIntensity - voxelValue) / gradient) / tw.radius);
-        else
+                tw.baseIntensity <= (voxelValue + tw.radius * gradient)) {
+            double val = tw.color.a * (1 - (1 / tw.radius) * Math.abs((tw.baseIntensity - voxelValue) / gradient));
+            return val;
+        } else
             return 0;
     }
 
@@ -408,11 +423,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         }
 
         if (useTriLinearInterpolation) {
-            int x = (int) Math.floor(coord[0]);
-            int y = (int) Math.floor(coord[1]);
-            int z = (int) Math.floor(coord[2]);
-            return gradients.getGradient(x, y, z).mag;
-        } else {
             int x1 = (int) Math.floor(coord[0]);
             int y1 = (int) Math.floor(coord[1]);
             int z1 = (int) Math.floor(coord[2]);
@@ -424,14 +434,19 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             double beta = coord[1] - y1;
             double gamma = coord[2] - z1;
 
-            return (short) ((1 - alpha) * (1 - beta) * (1 - gamma) * gradients.getGradient(x1, y1, z1).mag +
+            return (1 - alpha) * (1 - beta) * (1 - gamma) * gradients.getGradient(x1, y1, z1).mag +
                     alpha * (1 - beta) * (1 - gamma) * gradients.getGradient(x2, y1, z1).mag +
                     (1 - alpha) * beta * (1 - gamma) * gradients.getGradient(x1, y2, z1).mag +
                     alpha * beta * (1 - gamma) * gradients.getGradient(x2, y2, z1).mag +
                     (1 - alpha) * (1 - beta) * gamma * gradients.getGradient(x1, y1, z2).mag +
                     alpha * (1 - beta) * gamma * gradients.getGradient(x2, y1, z2).mag +
                     (1 - alpha) * beta * gamma * gradients.getGradient(x1, y2, z2).mag +
-                    alpha * beta * gamma * gradients.getGradient(x2, y2, z2).mag);
+                    alpha * beta * gamma * gradients.getGradient(x2, y2, z2).mag;
+        } else {
+            int x = (int) Math.floor(coord[0]);
+            int y = (int) Math.floor(coord[1]);
+            int z = (int) Math.floor(coord[2]);
+            return gradients.getGradient(x, y, z).mag;
         }
     }
 
@@ -483,7 +498,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
                 finalColor.set(0, 0, 0, 1);
                 double[] v = VectorMath.subtract(farP, nearP);
-                for (double t = 0.0; t <= 1.0; t += 0.01) {
+                for (double t = 0.0; t <= 1.0; t += 0.005) {
                     pixelCoord[0] = nearP[0] + v[0] * t;
                     pixelCoord[1] = nearP[1] + v[1] * t;
                     pixelCoord[2] = nearP[2] + v[2] * t;
@@ -579,7 +594,9 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             return;
         }
 
-        drawBoundingBox(gl);
+        if (showBoundingBox) {
+            drawBoundingBox(gl);
+        }
 
         gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, viewMatrix, 0);
 

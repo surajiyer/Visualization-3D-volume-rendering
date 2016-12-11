@@ -16,7 +16,7 @@ public class VoxelGradient {
     public double mag;
     
     public VoxelGradient() {
-        x = y = z = mag = 0.0f;
+        x = y = z = mag = 0.0;
     }
     
     public VoxelGradient(double gx, double gy, double gz) {
